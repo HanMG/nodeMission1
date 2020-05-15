@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+</head>
+<body>
+    <div class="header">
+        <input type="text" id="searchArea" style="margin:0 auto; width: 300px; height: 20px; border: 5px solid red" placeholder="검색!" name="keyword">
+        <button class="ajaxbtn" style="height:25px;">Search</button>
+    </div>
+    <hr>
+    <h3>--결과--</h3>
+    <div class="result"></div>
+    <script>
+        document.querySelector('.ajaxbtn').addEventListener('click',function(){
+            var keyword = document.getElementById('searchArea').value;
+            sendAjax('http://localhost:3000/ajax_search',keyword);
+        })
+
+        function sendAjax(url, data){
+            var data = {'keyword':data};
+            data = JSON.stringify(data);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url );
+            xhr.setRequestHeader('Content-Type',"application/json");
+            xhr.send(data);
+
+            xhr.addEventListener('load',function(){
+                console.log(xhr.responseText);
+                var result = JSON.parse(xhr.responseText);
+                var resultItem = "";
+                if(result.result !== "ok" ) return;
+                for (i in result.items) {
+                 resultItem += i+" : "+result.items[i] + "<br>";
+                }
+                document.querySelector('.result').innerHTML = resultItem;
+            })
+        }
+    </script>
+</body>
+</html>
